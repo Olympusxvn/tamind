@@ -1,0 +1,22 @@
+{
+  "name": "tamind",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w @tamind/api",
+    "dev:web": "npm run dev -w @tamind/web",
+    "build": "npm run build -w @tamind/shared && npm run build -w @tamind/api && npm run build -w @tamind/web",
+    "build:contracts": "cd contracts && sui move build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@esbuild/win32-x64": "^0.28.0",
+    "esbuild": "^0.28.0"
+  }
+}

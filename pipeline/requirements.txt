@@ -1,0 +1,3 @@
+# TaMind data pipeline — Sui tx collection → Parquet → API upload
+# Python 3.10+
+pyarrow>=18.0.0

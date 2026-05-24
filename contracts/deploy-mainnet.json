@@ -1,0 +1,10 @@
+{
+  "network": "mainnet",
+  "packageId": "0x4e61ac9692e3bd6dc69cca3d3e8a3efe8b9f46fcef9f5aaeae9d09b9ea1424ef",
+  "registryId": "0xa93536944fbfabebbdf49fe801640a086df097edfde736c0ac7f135ac86b014a",
+  "adminCapId": "0x74d31d323ba9a0f0bff321f1291229515f65936ed60cc753feb6c24864a4bdfa",
+  "upgradeCapId": "0x11afa554f1a00adb400bb3fe20e546816957244a988f162a3dacdabdf1e9cc64",
+  "deployTx": "7ZnvzyT1BU7DN4sbsnYa1sbfg4YZhPNFeBcjgHui7wjA",
+  "explorer": "https://suiscan.xyz/mainnet/tx/7ZnvzyT1BU7DN4sbsnYa1sbfg4YZhPNFeBcjgHui7wjA",
+  "deployedAt": "2026-05-24"
+}
