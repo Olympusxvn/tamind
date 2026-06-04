@@ -15,6 +15,7 @@ contracts/build/
 *.parquet
 !apps/api/assets/*.parquet
 coverage/
+*.tsbuildinfo
 
 # Local Netlify folder
 .netlify

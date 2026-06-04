@@ -65,13 +65,14 @@ Step-by-step walkthrough: **[docs/DEMO.md](docs/DEMO.md)**.
 For the hackathon, TaMind ships a **vertical slice that works end-to-end on Sui Mainnet**:
 
 ✅ **Single dataset type** — *Sui Mainnet transactions (rolling window)*
-✅ **Tatum Sui RPC** as the sole data source (`https://sui-mainnet.gateway.tatum.io`)
-✅ **Walrus upload** — dataset blob on Walrus mainnet (`@mysten/walrus`)
+✅ **Tatum Sui RPC** as the sole data source (`https://sui-mainnet.gateway.tatum.io`); optional **user API key** in the live app header
+✅ **Walrus integration** — `@mysten/walrus` upload path + API wired (`POST /api/datasets/upload`)
+⏳ **Walrus mainnet blob (live listing)** — demo registry uses placeholder blob ID; real upload blocked by network capacity — see [docs/DEMO.md](docs/DEMO.md)
 ✅ **Sui Move marketplace contract** — `DatasetRegistry` + escrow on mainnet
-✅ **React frontend** — browse → buy → verify → download
-✅ **Verify-on-Walrus button** — independent blob check against Walrus aggregator
+✅ **React frontend** — browse → buy → verify → download ([live demo](https://tamind-hackathon-demo.netlify.app))
+✅ **Verify button** — on-chain listing check + Walrus aggregator fetch (demo mode when blob is placeholder)
 ⏳ **Seal V2** — Move `seal_approve` + API/UI wired; **disabled in hackathon demo** (mainnet key servers via Enoki only — see [CHANGELOG.md](CHANGELOG.md))
-✅ **Bonus: Tatum MCP** demo query — *"find a dataset about Sui DeFi activity"*
+⏳ **Tatum MCP** (stretch) — not shipped in this repo; see [Tatum MCP server](https://github.com/tatumio/blockchain-mcp) for post-hackathon
 
 Everything else (multi-chain, royalties, subscriptions, time-lock policies, automated daily pipelines) is **explicitly deferred** — see [Roadmap](#-roadmap).
 
@@ -134,7 +135,7 @@ Everything else (multi-chain, royalties, subscriptions, time-lock policies, auto
 6. **Discover** — Frontend lists datasets from on-chain registry.
 7. **Purchase** — Buyer pays escrow; `PurchaseEvent` emitted.
 8. **Decrypt** — `SessionKey` + wallet sign → PTB `seal_approve` → `client.seal.decrypt` → Parquet.
-9. **Verify** — **Verify on Walrus**: recompute blob ID on ciphertext bytes vs on-chain value. ✅
+9. **Verify** — On-chain blob ID vs Walrus aggregator (full match when a real blob is on Walrus; demo mode otherwise — see [docs/DEMO.md](docs/DEMO.md)).
 
 ---
 
@@ -291,7 +292,7 @@ tamind/
 ├── CLAUDE.md                          # AI agent rules (Karpathy + TaMind context)
 ├── README.md
 ├── LICENSE
-├── docker-compose.yml                 # Local dev: API + web + optional Walrus proxy
+├── netlify.toml                       # Netlify build + API function + SPA redirects
 │
 ├── openspec/                          # OpenSpec — agree before building
 │   ├── specs/                         # Source of truth (merged after /opsx:archive)
@@ -318,19 +319,18 @@ tamind/
 ├── apps/
 │   ├── web/                           # React + Vite marketplace UI
 │   │   ├── src/
-│   │   │   ├── components/            # DatasetCard · VerifyButton · BuyModal
+│   │   │   ├── components/            # DatasetCard · VerifyButton · TatumKeySettings
 │   │   │   ├── pages/                 # Marketplace · DatasetDetail
-│   │   │   ├── hooks/                 # useWallet · usePurchase · useVerify
-│   │   │   └── lib/                   # API client (no Tatum key in browser)
+│   │   │   └── lib/                   # API client · Tatum key storage (localStorage)
 │   │   ├── index.html
 │   │   └── package.json
 │   │
 │   └── api/                           # Express + TypeScript backend
+│       ├── assets/                    # Demo Parquet for /demo-file
 │       ├── src/
 │       │   ├── routes/                # /datasets · /upload · /verify · /sui/*
-│       │   ├── services/              # tatum.ts · seal-v2.ts · walrus.ts · sui.ts
-│       │   ├── middleware/            # Tatum RPC proxy (API key server-side)
-│       │   └── mcp/                   # (stretch) Tatum MCP relay
+│       │   ├── services/              # seal-v2.ts · walrus.ts · sui.ts · registry.ts
+│       │   └── lib/                   # Per-request Tatum API key resolution
 │       ├── .env.example
 │       └── package.json
 │
@@ -359,8 +359,13 @@ tamind/
 │       │   └── walrus/                # computeWalrusBlobId()
 │       └── package.json
 │
+├── netlify/
+│   └── functions/                     # Serverless Express API for Netlify deploy
+│
 └── docs/
-    └── pitch.md                       # Original hackathon pitch (Tamind.txt)
+    ├── DEMO.md                        # Live demo script + on-chain refs
+    ├── DEVELOPMENT.md                 # Hackathon workflow
+    └── pitch.md                       # Original hackathon pitch
 ```
 
 ### Module map
@@ -390,15 +395,15 @@ Do **not** implement features outside the active OpenSpec change. Post-hackathon
 
 | Judging Criterion | Weight | How TaMind Delivers |
 |-------------------|:------:|---------------------|
-| **Walrus + Tatum Integration** | 30% | Walrus is *core, not cosmetic*: blobs back every listing, Seal enforces every purchase. Tatum Sui RPC powers all on-chain reads; Data API feeds the pipeline; MCP demoed as the AI gateway. |
-| **Technical Quality** | 30% | Modular monorepo, typed end-to-end, deterministic blob verification, on-chain escrow with explicit Seal hand-off. |
+| **Walrus + Tatum Integration** | 30% | Walrus SDK + upload API in the core path; Tatum Sui RPC for registry reads and pipeline; live demo on Netlify with optional user Tatum API key. |
+| **Technical Quality** | 30% | Modular monorepo, typed end-to-end, on-chain escrow, Walrus/Seal integration code complete (Seal off on mainnet demo). |
 | **Creativity** | 20% | First *verifiable* AI dataset marketplace — combines decentralized storage, programmable access, and AI-ready packaging into one buyer-side primitive: **the blob ID**. |
-| **Presentation** | 20% | This README + a 2–3 min demo video that shows buy → decrypt → **independently verify on Walrus** in real time. |
+| **Presentation** | 20% | This README, [live demo](https://tamind-hackathon-demo.netlify.app), [docs/DEMO.md](docs/DEMO.md), and a 2–3 min video (buy → verify → download). |
 
 **Targeted bonus prizes:**
 
-- 🌟 **Best Walrus Integration** — Seal-gated, content-addressed, independently verifiable.
-- ⚡ **Best Use of Tatum Tools** — Sui RPC + Data API + MCP, all in one flow.
+- 🌟 **Best Walrus Integration** — Walrus upload path + verify UI; mainnet blob pending network capacity (documented honestly).
+- ⚡ **Best Use of Tatum Tools** — Sui RPC + Data API in pipeline and API; user-supplied Tatum key in production UI.
 
 ---
 
@@ -406,13 +411,15 @@ Do **not** implement features outside the active OpenSpec change. Post-hackathon
 
 ### ✅ MVP — Hackathon (May 23 → Jun 6, 2026)
 
-- [ ] Sui Mainnet transactions dataset (rolling window)
-- [ ] Tatum Sui RPC integration
-- [ ] Walrus upload + content-addressed blob IDs
-- [ ] Seal V2 encryption + `seal_approve` payment gate
-- [ ] Sui Move `DatasetRegistry` + escrow contract
-- [ ] React marketplace UI with **Verify on Walrus** button
-- [ ] Tatum MCP demo query (stretch)
+- [x] Sui Mainnet transactions dataset (rolling window)
+- [x] Tatum Sui RPC integration (+ optional user API key in web UI)
+- [x] Walrus SDK + upload API (`@mysten/walrus`)
+- [ ] Walrus mainnet blob for live listing (placeholder ID in demo registry)
+- [x] Seal V2 + `seal_approve` wired in Move/API/UI (`SEAL_ENABLED=false` on mainnet demo)
+- [x] Sui Move `DatasetRegistry` + escrow contract (mainnet deployed)
+- [x] React marketplace UI + verify + [Netlify demo](https://tamind-hackathon-demo.netlify.app)
+- [ ] Tatum MCP demo query (stretch — not implemented)
+- [ ] Demo video + hackathon form submit
 
 > Track progress in [`openspec/changes/mvp-hackathon-sui-txs/tasks.md`](openspec/changes/mvp-hackathon-sui-txs/tasks.md)
 

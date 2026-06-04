@@ -63,13 +63,14 @@ curl http://localhost:3001/api/datasets/0/verify
 
 ## 2. Demo script (2–3 min video)
 
-1. Open **http://localhost:5173** — marketplace shows **Sui txs 7d** (1 SUI).
-2. Click dataset → show **Blob ID**, **Walrus URL**, seller on **mainnet**.
-3. **Verify** → green: *On-chain listing verified (hackathon demo)* — explain Walrus pending.
-4. **Connect wallet** (Sui mainnet, ≥1 SUI + gas).
-5. **Buy dataset** → sign tx → show **PurchaseReceipt** in UI.
-6. **Download dataset** → Parquet (100 recent mainnet txs via Tatum pipeline sample).
-7. Optional: open **Suiscan** registry + purchase tx for judges.
+1. Open **https://tamind-hackathon-demo.netlify.app** — marketplace shows **Sui txs 7d** (1 SUI).
+2. Optional: **Tatum API key** in header → paste your [Tatum](https://dashboard.tatum.io) key → Save.
+3. Click dataset → show **Blob ID**, **Walrus URL**, seller on **mainnet**.
+4. **Verify** → green: *On-chain listing verified (hackathon demo)* — explain Walrus blob is placeholder until mainnet upload succeeds.
+5. **Connect wallet** (Sui mainnet, ≥1 SUI + gas).
+6. **Buy dataset** → sign tx → show **PurchaseReceipt** in UI.
+7. **Download dataset** → Parquet (sample via `/api/datasets/0/demo-file`).
+8. Optional: open **Suiscan** registry + purchase tx for judges.
 
 ## 3. API endpoints (demo)
 
