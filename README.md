@@ -56,7 +56,9 @@ Three concrete pains for AI teams working with on-chain data:
 
 ## 🎬 Demo (on-chain dataset)
 
-Step-by-step hackathon demo with the live mainnet listing: **[docs/DEMO.md](docs/DEMO.md)**.
+**Live app:** [tamind-hackathon-demo.netlify.app](https://tamind-hackathon-demo.netlify.app) — connect a Sui mainnet wallet, or open **Tatum API key** in the header to use your own [Tatum](https://dashboard.tatum.io) key for RPC.
+
+Step-by-step walkthrough: **[docs/DEMO.md](docs/DEMO.md)**.
 
 ## 🚀 MVP Scope (Hackathon Deliverable)
 

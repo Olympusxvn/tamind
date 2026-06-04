@@ -1,6 +1,17 @@
 # TaMind — Hackathon demo (on-chain dataset)
 
-End-to-end demo using the **existing mainnet listing** (no new Walrus upload required).
+**Live:** https://tamind-hackathon-demo.netlify.app
+
+End-to-end demo using the **existing mainnet listing** (no new Walrus upload required). On Netlify, paste your Tatum API key via **Tatum API key** in the header (optional if the site has server env configured).
+
+## Git deploy (Netlify)
+
+Auto-deploy from GitHub needs the Netlify GitHub App on `Olympusxvn/tamind`:
+
+1. Open [Deploy settings](https://app.netlify.com/projects/tamind-hackathon-demo/configuration/deploys) → **Link repository** (or **Manage repository**).
+2. Choose **GitHub** → `Olympusxvn/tamind` → branch `main` → save. Netlify reads `netlify.toml` at repo root.
+
+Until linked, redeploy from your machine: `netlify deploy --build --prod --filter @tamind/web`.
 
 ## On-chain references
 
