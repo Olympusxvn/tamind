@@ -1,7 +1,7 @@
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
 import { walrusAggregatorUrl } from '@tamind/shared';
-import { WalrusClient } from '@mysten/walrus';
+import type { WalrusClient } from '@mysten/walrus';
 import { config } from '../config.js';
 
 let walrusClient: WalrusClient | null = null;
@@ -23,9 +23,10 @@ function getSigner() {
   return Ed25519Keypair.fromSecretKey(config.suiPrivateKey);
 }
 
-export function getWalrusClient(): WalrusClient {
+export async function getWalrusClient(): Promise<WalrusClient> {
   if (!walrusClient) {
-    walrusClient = new WalrusClient({
+    const { WalrusClient: Client } = await import('@mysten/walrus');
+    walrusClient = new Client({
       network: config.suiNetwork === 'testnet' ? 'testnet' : 'mainnet',
       suiClient: getWalrusSuiClient() as never,
     });
@@ -43,7 +44,7 @@ const UPLOAD_TIMEOUT_MS = 120_000;
 async function uploadViaSdk(ciphertext: Uint8Array): Promise<WalrusUploadResult> {
   const network = config.suiNetwork === 'testnet' ? 'testnet' : 'mainnet';
   const signer = getSigner();
-  const client = getWalrusClient();
+  const client = await getWalrusClient();
 
   const uploadPromise = client.writeBlob({
     blob: ciphertext,
@@ -113,6 +114,6 @@ export async function fetchBlobBytes(walrusUrl: string): Promise<Uint8Array> {
 }
 
 export async function readBlobById(blobId: string): Promise<Uint8Array> {
-  const client = getWalrusClient();
+  const client = await getWalrusClient();
   return client.readBlob({ blobId });
 }

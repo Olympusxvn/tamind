@@ -8,6 +8,7 @@ import { listDatasetsFromChain, getDatasetById } from '../services/registry.js';
 import { encryptDataset, buildSealApproveTxBytes } from '../services/seal-v2.js';
 import { uploadCiphertext, fetchBlobBytes } from '../services/walrus.js';
 import { registerDatasetOnChain } from '../services/onchain.js';
+import { parseUserTatumApiKey } from '../lib/tatum-key.js';
 import { getSuiClient } from '../services/sui.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
@@ -17,7 +18,7 @@ const DEMO_BLOB_IDS = new Set(['tamind_demo_blob_v1', 'demo_blob_sui_tx_7d']);
 
 function demoParquetPath(): string | null {
   const candidates = [
-    join(process.cwd(), '../../pipeline/out/sui_tx_7d_20260524.parquet'),
+    join(process.cwd(), 'apps/api/assets/sui_tx_demo.parquet'),
     join(process.cwd(), 'pipeline/out/sui_tx_7d_20260524.parquet'),
   ];
   return candidates.find((p) => existsSync(p)) ?? null;
@@ -25,9 +26,9 @@ function demoParquetPath(): string | null {
 
 export const datasetsRouter = Router();
 
-datasetsRouter.get('/', async (_req, res, next) => {
+datasetsRouter.get('/', async (req, res, next) => {
   try {
-    const datasets = await listDatasetsFromChain();
+    const datasets = await listDatasetsFromChain(parseUserTatumApiKey(req));
     res.json({ datasets });
   } catch (e) {
     next(e);
@@ -37,7 +38,7 @@ datasetsRouter.get('/', async (_req, res, next) => {
 datasetsRouter.get('/:id', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
-    const dataset = await getDatasetById(id);
+    const dataset = await getDatasetById(id, parseUserTatumApiKey(req));
     if (!dataset) return res.status(404).json({ error: 'Dataset not found' });
     res.json({ dataset });
   } catch (e) {
@@ -91,7 +92,8 @@ datasetsRouter.post('/upload', upload.single('file'), async (req, res, next) => 
 datasetsRouter.post('/:id/purchase', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
-    const dataset = await getDatasetById(id);
+    const userTatumKey = parseUserTatumApiKey(req);
+    const dataset = await getDatasetById(id, userTatumKey);
     if (!dataset) return res.status(404).json({ error: 'Dataset not found' });
 
     if (!config.packageId || !config.registryId) {
@@ -111,7 +113,7 @@ datasetsRouter.post('/:id/purchase', async (req, res, next) => {
       arguments: [tx.object(config.registryId), tx.pure.u64(id), coin],
     });
 
-    const client = getSuiClient();
+    const client = getSuiClient(userTatumKey);
     const bytes = await tx.build({ client });
     res.json({
       datasetId: id,
@@ -126,7 +128,7 @@ datasetsRouter.post('/:id/purchase', async (req, res, next) => {
 datasetsRouter.get('/:id/verify', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
-    const dataset = await getDatasetById(id);
+    const dataset = await getDatasetById(id, parseUserTatumApiKey(req));
     if (!dataset) return res.status(404).json({ error: 'Dataset not found' });
 
     let bytesLength = 0;
@@ -159,10 +161,16 @@ datasetsRouter.post('/:id/seal-approve', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
     const body = z.object({ receiptId: z.string().min(1) }).parse(req.body);
-    const dataset = await getDatasetById(id);
+    const userTatumKey = parseUserTatumApiKey(req);
+    const dataset = await getDatasetById(id, userTatumKey);
     if (!dataset) return res.status(404).json({ error: 'Dataset not found' });
 
-    const txBytes = await buildSealApproveTxBytes(dataset.sealPolicyId, body.receiptId, id);
+    const txBytes = await buildSealApproveTxBytes(
+      dataset.sealPolicyId,
+      body.receiptId,
+      id,
+      userTatumKey,
+    );
     res.json({ transactionBlock: Buffer.from(txBytes).toString('base64') });
   } catch (e) {
     next(e);
@@ -172,7 +180,7 @@ datasetsRouter.post('/:id/seal-approve', async (req, res, next) => {
 datasetsRouter.get('/:id/demo-file', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
-    const dataset = await getDatasetById(id);
+    const dataset = await getDatasetById(id, parseUserTatumApiKey(req));
     if (!dataset) return res.status(404).json({ error: 'Dataset not found' });
 
     const parquet = demoParquetPath();
@@ -190,7 +198,7 @@ datasetsRouter.get('/:id/demo-file', async (req, res, next) => {
 datasetsRouter.get('/:id/decrypt-params', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
-    const dataset = await getDatasetById(id);
+    const dataset = await getDatasetById(id, parseUserTatumApiKey(req));
     if (!dataset) return res.status(404).json({ error: 'Dataset not found' });
 
     res.json({

@@ -34,9 +34,10 @@ export async function buildSealApproveTxBytes(
   sealPolicyId: string,
   receiptId: string,
   datasetId: number,
+  tatumApiKey?: string,
 ): Promise<Uint8Array> {
   const { Transaction } = await import('@mysten/sui/transactions');
-  const client = getSuiClient();
+  const client = getSuiClient(tatumApiKey);
   const tx = new Transaction();
   tx.moveCall({
     target: `${config.packageId}::seal_policy::seal_approve`,

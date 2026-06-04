@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit';
 import { DatasetCard } from '../components/DatasetCard';
+import { TatumKeySettings } from '../components/TatumKeySettings';
 import { fetchDatasets } from '../lib/api';
 import type { Dataset } from '@tamind/shared';
 
@@ -24,7 +25,10 @@ export function MarketplacePage() {
           </h1>
           <p className="mt-1 text-slate-400">Verifiable Sui transaction datasets · Walrus + Seal V2</p>
         </div>
-        <ConnectButton />
+        <div className="flex flex-wrap items-center gap-2">
+          <TatumKeySettings />
+          <ConnectButton />
+        </div>
       </header>
 
       {account && (

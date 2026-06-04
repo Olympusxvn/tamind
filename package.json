@@ -10,6 +10,7 @@
     "dev:api": "npm run dev -w @tamind/api",
     "dev:web": "npm run dev -w @tamind/web",
     "build": "npm run build -w @tamind/shared && npm run build -w @tamind/api && npm run build -w @tamind/web",
+    "build:netlify": "npm run build -w @tamind/shared && npm run build -w @tamind/api && npm run build -w @tamind/web",
     "build:contracts": "cd contracts && sui move build"
   },
   "engines": {
@@ -17,6 +18,7 @@
   },
   "dependencies": {
     "@esbuild/win32-x64": "^0.28.0",
-    "esbuild": "^0.28.0"
+    "esbuild": "^0.28.0",
+    "serverless-http": "^3.2.0"
   }
 }

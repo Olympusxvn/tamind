@@ -13,4 +13,8 @@ contracts/build/
 .idea/
 .vscode/
 *.parquet
+!apps/api/assets/*.parquet
 coverage/
+
+# Local Netlify folder
+.netlify

@@ -1,19 +1,21 @@
 import { Router } from 'express';
 import { config } from '../config.js';
+import { hasTatumRpcAccess, resolveTatumApiKey } from '../lib/tatum-key.js';
 
 export const suiProxyRouter = Router();
 
-/** Proxy JSON-RPC to Tatum Sui gateway (API key server-side). */
+/** Proxy JSON-RPC to Tatum Sui gateway (user or server API key). */
 suiProxyRouter.post('/*', async (req, res) => {
-  if (!config.tatumApiKey) {
-    return res.status(503).json({ error: 'TATUM_API_KEY not configured' });
+  if (!hasTatumRpcAccess(req)) {
+    return res.status(503).json({ error: 'Tatum API key not configured (set TATUM_API_KEY or send X-Tatum-Api-Key)' });
   }
+  const apiKey = resolveTatumApiKey(req);
   try {
     const upstream = await fetch(config.tatumSuiRpc, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': config.tatumApiKey,
+        'x-api-key': apiKey,
       },
       body: JSON.stringify(req.body),
     });

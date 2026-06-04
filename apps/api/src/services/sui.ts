@@ -2,32 +2,46 @@ import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
 import { SealClient, type SealCompatibleClient } from '@mysten/seal';
 import { config } from '../config.js';
 
-let suiClient: SuiClient | null = null;
+const clientCache = new Map<string, SuiClient>();
 let sealClient: SealClient | null = null;
 
-export function getSuiClient(): SuiClient {
-  if (!suiClient) {
-    const url = config.tatumApiKey
-      ? config.tatumSuiRpc
-      : getFullnodeUrl(config.suiNetwork === 'mainnet' ? 'mainnet' : 'testnet');
+function cacheKey(tatumApiKey?: string): string {
+  const key = tatumApiKey?.trim() || config.tatumApiKey;
+  return key || `__public__:${config.suiNetwork}`;
+}
 
-    suiClient = new SuiClient({
-      url,
-      ...(config.tatumApiKey
-        ? {
-            fetch: (input: RequestInfo | URL, init?: RequestInit) =>
-              fetch(input, {
-                ...init,
-                headers: {
-                  ...init?.headers,
-                  'x-api-key': config.tatumApiKey,
-                },
-              }),
-          }
-        : {}),
-    });
+function createSuiClient(tatumApiKey?: string): SuiClient {
+  const apiKey = tatumApiKey?.trim() || config.tatumApiKey;
+  const url = apiKey
+    ? config.tatumSuiRpc
+    : getFullnodeUrl(config.suiNetwork === 'mainnet' ? 'mainnet' : 'testnet');
+
+  return new SuiClient({
+    url,
+    ...(apiKey
+      ? {
+          fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+            fetch(input, {
+              ...init,
+              headers: {
+                ...init?.headers,
+                'x-api-key': apiKey,
+              },
+            }),
+        }
+      : {}),
+  });
+}
+
+/** Per-request Tatum key when provided; otherwise server env or public fullnode. */
+export function getSuiClient(tatumApiKey?: string): SuiClient {
+  const key = cacheKey(tatumApiKey);
+  let client = clientCache.get(key);
+  if (!client) {
+    client = createSuiClient(tatumApiKey);
+    clientCache.set(key, client);
   }
-  return suiClient;
+  return client;
 }
 
 export function getSealClient(): SealClient | null {

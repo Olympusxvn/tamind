@@ -61,10 +61,10 @@ function parseDataset(raw: Record<string, unknown>, id: number): Dataset {
   };
 }
 
-export async function listDatasetsFromChain(): Promise<Dataset[]> {
+export async function listDatasetsFromChain(tatumApiKey?: string): Promise<Dataset[]> {
   if (!config.registryId) return [];
 
-  const client = getSuiClient();
+  const client = getSuiClient(tatumApiKey);
   const obj = await client.getObject({
     id: config.registryId,
     options: { showContent: true },
@@ -79,7 +79,7 @@ export async function listDatasetsFromChain(): Promise<Dataset[]> {
   return datasets.map((d, id) => parseDataset(d, id));
 }
 
-export async function getDatasetById(id: number): Promise<Dataset | null> {
-  const all = await listDatasetsFromChain();
+export async function getDatasetById(id: number, tatumApiKey?: string): Promise<Dataset | null> {
+  const all = await listDatasetsFromChain(tatumApiKey);
   return all.find((d) => d.id === id) ?? null;
 }

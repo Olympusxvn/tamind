@@ -8,8 +8,9 @@ import {
   useSuiClient,
 } from '@mysten/dapp-kit';
 import { VerifyButton } from '../components/VerifyButton';
+import { TatumKeySettings } from '../components/TatumKeySettings';
 import {
-  demoFileUrl,
+  fetchDemoFile,
   fetchDataset,
   fetchDecryptParams,
   fetchPurchaseTx,
@@ -164,7 +165,7 @@ export function DatasetDetailPage() {
 
     setStatus('Walrus unavailable — downloading hackathon demo Parquet…');
     try {
-      const res = await fetch(demoFileUrl(dataset.id));
+      const res = await fetchDemoFile(dataset.id);
       if (!res.ok) throw new Error('Demo file not found on API');
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -185,9 +186,12 @@ export function DatasetDetailPage() {
 
   return (
     <div>
-      <Link to="/" className="text-sm text-sui hover:underline">
-        ← Back to marketplace
-      </Link>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link to="/" className="text-sm text-sui hover:underline">
+          ← Back to marketplace
+        </Link>
+        <TatumKeySettings />
+      </div>
 
       <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
         <h1 className="text-2xl font-bold">{dataset.title}</h1>
