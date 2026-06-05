@@ -36,7 +36,7 @@ Until linked, redeploy from your machine: `netlify deploy --build --prod --filte
 | Download sample Parquet | ✅ Fallback `GET /api/datasets/0/demo-file` |
 | Seal V2 decrypt | ⏳ Disabled for demo (`SEAL_ENABLED=false`) |
 
-Walrus mainnet upload is blocked by network `EStorageExceeded` — see [CHANGELOG.md](../CHANGELOG.md).
+Walrus mainnet upload is blocked by network `EStorageExceeded` — see [CHANGELOG.md](../CHANGELOG.md). When capacity allows, follow **[WALRUS-UPLOAD.md](./WALRUS-UPLOAD.md)** to register a real blob as a new listing (dataset `1+`) without changing the current dataset `0` demo.
 
 ## 1. Start servers
 
