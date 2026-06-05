@@ -2,7 +2,13 @@
 
 Expose TaMind marketplace datasets to AI agents (Cursor, Claude Desktop, etc.) via the [Model Context Protocol](https://modelcontextprotocol.io).
 
-Pair with the official **[Tatum Blockchain MCP](https://github.com/tatumio/blockchain-mcp)** for Sui RPC and wallet data on the same agent.
+**Hackathon context ([Tatum × Walrus](https://tatum.io/tatum-x-walrus-hackathon)):** MCP is **optional** (bonus category *Best Use of Tatum Tools*). TaMind MCP needs **no API key** — it calls the live demo API, which already uses Tatum Sui RPC on the server.
+
+| Requirement | Who needs it |
+|-------------|--------------|
+| Tatum API key (free at [dashboard.tatum.io](https://dashboard.tatum.io)) | **Builders** deploying their own API / pipeline — not end users of this repo |
+| Walrus + Sui mainnet | Project submission |
+| MCP | Optional bonus |
 
 ## Tools (`@tamind/mcp`)
 
@@ -21,26 +27,24 @@ From repo root:
 
 ```bash
 npm install
-npm run build -w @tamind/mcp
+npm run build:mcp
 ```
 
-## 2. Cursor — TaMind + Tatum MCP
+## 2. Cursor
 
-Repo includes [`.cursor/mcp.json`](../.cursor/mcp.json) — replace `YOUR_TATUM_API_KEY`, run `npm run build:mcp`, then restart Cursor.
+Repo includes [`.cursor/mcp.json`](../.cursor/mcp.json) — run `npm run build:mcp`, then **restart Cursor**.
 
-**Cursor Settings → MCP** should pick up project config automatically. Or paste the same JSON manually.
+No keys to paste. **Settings → MCP** should show `tamind` connected.
 
 ## 3. Claude Desktop
 
-Copy servers from [`.cursor/mcp.json`](../.cursor/mcp.json) into:
+Copy the `tamind` server from [`.cursor/mcp.json`](../.cursor/mcp.json) into:
 
 `%APPDATA%\Claude\claude_desktop_config.json`
 
-Quit Claude fully and reopen after editing.
+Use an absolute path to `apps/mcp/dist/index.js` if `${workspaceFolder}` is not supported. Quit Claude fully and reopen.
 
 ## 4. Example prompts
-
-**Dataset discovery (TaMind tools):**
 
 ```text
 Search TaMind for datasets about Sui transactions, then verify dataset 0.
@@ -50,34 +54,41 @@ Search TaMind for datasets about Sui transactions, then verify dataset 0.
 List all TaMind datasets and show blob ID and price in SUI for each.
 ```
 
-**On-chain context (Tatum MCP):**
+## 5. Optional — Tatum Blockchain MCP
 
-```text
-Using Tatum gateway_execute_rpc on Sui mainnet, read object 0xa93536944fbfabebbdf49fe801640a086df097edfde736c0ac7f135ac86b014a.
+For Sui RPC / wallet tools in the same agent ([`@tatumio/blockchain-mcp`](https://github.com/tatumio/blockchain-mcp)), add a second server with a **free** Tatum key (only if you want on-chain queries beyond TaMind tools):
+
+```json
+"tatumio": {
+  "command": "npx",
+  "args": ["-y", "@tatumio/blockchain-mcp"],
+  "env": {
+    "TATUM_API_KEY": "<your-free-key-from-dashboard.tatum.io>"
+  }
+}
 ```
 
-```text
-Get transaction history for the seller address of TaMind dataset 0.
-```
+Not required for hackathon submission or for TaMind dataset discovery.
 
-## 5. Local API
+## 6. Local API
 
 ```bash
 npm run dev:api
 ```
 
+Point MCP at localhost (requires `TATUM_API_KEY` in `apps/api/.env` for your own RPC):
+
 ```json
 "env": {
-  "TAMIND_API_URL": "http://localhost:3001",
-  "TATUM_API_KEY": "..."
+  "TAMIND_API_URL": "http://localhost:3001"
 }
 ```
 
-## 6. Environment
+## 7. Environment
 
 | Variable | Required | Default |
 |----------|----------|---------|
 | `TAMIND_API_URL` | No | `https://tamind-hackathon-demo.netlify.app` |
-| `TATUM_API_KEY` | No | — sent as `X-Tatum-Api-Key` when set |
+| `TATUM_API_KEY` | No | Only if calling an API without a server-side key |
 
-Never commit API keys. Use Cursor MCP env or local `.env` (not in git).
+Never commit API keys.

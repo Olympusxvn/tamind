@@ -2,17 +2,9 @@
   "mcpServers": {
     "tamind": {
       "command": "node",
-      "args": ["C:/Users/Admin/tamind/apps/mcp/dist/index.js"],
+      "args": ["${workspaceFolder}/apps/mcp/dist/index.js"],
       "env": {
-        "TAMIND_API_URL": "https://tamind-hackathon-demo.netlify.app",
-        "TATUM_API_KEY": "YOUR_TATUM_API_KEY"
-      }
-    },
-    "tatumio": {
-      "command": "npx",
-      "args": ["-y", "@tatumio/blockchain-mcp"],
-      "env": {
-        "TATUM_API_KEY": "YOUR_TATUM_API_KEY"
+        "TAMIND_API_URL": "https://tamind-hackathon-demo.netlify.app"
       }
     }
   }
