@@ -58,7 +58,7 @@ Three concrete pains for AI teams working with on-chain data:
 
 **Live app:** [tamind-hackathon-demo.netlify.app](https://tamind-hackathon-demo.netlify.app) — connect a Sui mainnet wallet, or open **Tatum API key** in the header to use your own [Tatum](https://dashboard.tatum.io) key for RPC.
 
-Step-by-step walkthrough: **[docs/DEMO.md](docs/DEMO.md)**.
+Step-by-step walkthrough: **[docs/DEMO.md](docs/DEMO.md)** · AI agents: **[docs/MCP.md](docs/MCP.md)**.
 
 ## 🚀 MVP Scope (Hackathon Deliverable)
 
@@ -72,7 +72,7 @@ For the hackathon, TaMind ships a **vertical slice that works end-to-end on Sui 
 ✅ **React frontend** — browse → buy → verify → download ([live demo](https://tamind-hackathon-demo.netlify.app))
 ✅ **Verify button** — on-chain listing check + Walrus aggregator fetch (demo mode when blob is placeholder)
 ⏳ **Seal V2** — Move `seal_approve` + API/UI wired; **disabled in hackathon demo** (mainnet key servers via Enoki only — see [CHANGELOG.md](CHANGELOG.md))
-⏳ **Tatum MCP** (stretch) — not shipped in this repo; see [Tatum MCP server](https://github.com/tatumio/blockchain-mcp) for post-hackathon
+✅ **TaMind MCP** — `apps/mcp` tools for AI dataset discovery; setup in **[docs/MCP.md](docs/MCP.md)** (pair with [Tatum MCP](https://github.com/tatumio/blockchain-mcp))
 
 Everything else (multi-chain, royalties, subscriptions, time-lock policies, automated daily pipelines) is **explicitly deferred** — see [Roadmap](#-roadmap).
 
@@ -121,7 +121,7 @@ Everything else (multi-chain, royalties, subscriptions, time-lock policies, auto
 | **Backend** | Node.js · Express · TypeScript |
 | **Frontend** | React · TypeScript · TailwindCSS · `@mysten/dapp-kit` |
 | **Data Pipeline** | Python · Pandas · PyArrow |
-| **AI Gateway (stretch)** | Tatum MCP Server |
+| **AI Gateway** | TaMind MCP (`apps/mcp`) + [Tatum MCP](https://github.com/tatumio/blockchain-mcp) |
 
 ---
 
@@ -333,6 +333,10 @@ tamind/
 │       │   └── lib/                   # Per-request Tatum API key resolution
 │       ├── .env.example
 │       └── package.json
+│   │
+│   └── mcp/                           # MCP server — AI dataset discovery tools
+│       ├── src/
+│       └── package.json
 │
 ├── contracts/                         # Sui Move smart contracts
 │   ├── sources/
@@ -364,6 +368,7 @@ tamind/
 │
 └── docs/
     ├── DEMO.md                        # Live demo script + on-chain refs
+    ├── MCP.md                         # TaMind + Tatum MCP for AI agents
     ├── DEVELOPMENT.md                 # Hackathon workflow
     └── pitch.md                       # Original hackathon pitch
 ```
@@ -418,7 +423,7 @@ Do **not** implement features outside the active OpenSpec change. Post-hackathon
 - [x] Seal V2 + `seal_approve` wired in Move/API/UI (`SEAL_ENABLED=false` on mainnet demo)
 - [x] Sui Move `DatasetRegistry` + escrow contract (mainnet deployed)
 - [x] React marketplace UI + verify + [Netlify demo](https://tamind-hackathon-demo.netlify.app)
-- [ ] Tatum MCP demo query (stretch — not implemented)
+- [x] TaMind MCP — list / search / verify datasets ([docs/MCP.md](docs/MCP.md))
 - [ ] Demo video + hackathon form submit
 
 > Track progress in [`openspec/changes/mvp-hackathon-sui-txs/tasks.md`](openspec/changes/mvp-hackathon-sui-txs/tasks.md)

@@ -9,8 +9,9 @@
   "scripts": {
     "dev:api": "npm run dev -w @tamind/api",
     "dev:web": "npm run dev -w @tamind/web",
-    "build": "npm run build -w @tamind/shared && npm run build -w @tamind/api && npm run build -w @tamind/web",
+    "build": "npm run build -w @tamind/shared && npm run build -w @tamind/api && npm run build -w @tamind/web && npm run build -w @tamind/mcp",
     "build:netlify": "npm run build -w @tamind/shared && npm run build -w @tamind/api && npm run build -w @tamind/web",
+    "build:mcp": "npm run build -w @tamind/mcp",
     "build:contracts": "cd contracts && sui move build"
   },
   "engines": {

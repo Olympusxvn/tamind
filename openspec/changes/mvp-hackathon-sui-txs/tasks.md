@@ -67,7 +67,7 @@
 
 - [ ] 8.1 Publish real 7d dataset via pipeline + upload (WAL funded — run `--upload`)
 - [ ] 8.2 Record demo video (Walrus verify + buy + download; no Seal in demo)
-- [ ] 8.3 Tatum MCP stretch
+- [ ] 8.3 Tatum MCP stretch — TaMind MCP in `apps/mcp` + [docs/MCP.md](../../docs/MCP.md); pair with official @tatumio/blockchain-mcp
 - [ ] 8.4 Submit hackathon form — https://docs.google.com/forms/d/e/1FAIpQLSdOkI-NlBkSHOudVcOXpeDN6h2TQf7f0m9JxA46mhx0Ifm77A/viewform
 
 ## 9. Post-Hackathon
