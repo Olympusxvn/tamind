@@ -26,35 +26,19 @@ npm run build -w @tamind/mcp
 
 ## 2. Cursor — TaMind + Tatum MCP
 
-**Cursor Settings → MCP → Add server**, or edit `.cursor/mcp.json` in this repo:
+Repo includes [`.cursor/mcp.json`](../.cursor/mcp.json) — replace `YOUR_TATUM_API_KEY`, run `npm run build:mcp`, then restart Cursor.
 
-```json
-{
-  "mcpServers": {
-    "tamind": {
-      "command": "node",
-      "args": ["apps/mcp/dist/index.js"],
-      "env": {
-        "TAMIND_API_URL": "https://tamind-hackathon-demo.netlify.app",
-        "TATUM_API_KEY": "YOUR_TATUM_API_KEY"
-      }
-    },
-    "tatumio": {
-      "command": "npx",
-      "args": ["-y", "@tatumio/blockchain-mcp"],
-      "env": {
-        "TATUM_API_KEY": "YOUR_TATUM_API_KEY"
-      }
-    }
-  }
-}
-```
+**Cursor Settings → MCP** should pick up project config automatically. Or paste the same JSON manually.
 
-Use absolute paths for `args` if Cursor runs from another cwd, e.g. `C:/Users/You/tamind/apps/mcp/dist/index.js`.
+## 3. Claude Desktop
 
-Optional: omit `TATUM_API_KEY` on `tamind` if Netlify has server env; set it when the API needs your key for Tatum RPC.
+Copy servers from [`.cursor/mcp.json`](../.cursor/mcp.json) into:
 
-## 3. Example prompts
+`%APPDATA%\Claude\claude_desktop_config.json`
+
+Quit Claude fully and reopen after editing.
+
+## 4. Example prompts
 
 **Dataset discovery (TaMind tools):**
 
@@ -76,7 +60,7 @@ Using Tatum gateway_execute_rpc on Sui mainnet, read object 0xa93536944fbfabebbd
 Get transaction history for the seller address of TaMind dataset 0.
 ```
 
-## 4. Local API
+## 5. Local API
 
 ```bash
 npm run dev:api
@@ -89,7 +73,7 @@ npm run dev:api
 }
 ```
 
-## 5. Environment
+## 6. Environment
 
 | Variable | Required | Default |
 |----------|----------|---------|
